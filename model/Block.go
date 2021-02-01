@@ -3,8 +3,6 @@ package model
 import (
 	"bytes"
 	"crypto/sha256"
-	"encoding/binary"
-	"log"
 	"time"
 )
 
@@ -12,7 +10,7 @@ type Block struct {
 	TimeStamp    int64
 	Hash         []byte
 	PreBlockHash []byte
-	Heigth       int64
+	Height       int64
 	Data         []byte
 }
 
@@ -21,7 +19,7 @@ func NewBlock(height int64, prevBlockHash []byte, data []byte) *Block {
 		TimeStamp:    time.Now().Unix(),
 		Hash:         nil,
 		PreBlockHash: prevBlockHash,
-		Heigth:       height,
+		Height:       height,
 		Data:         data,
 	}
 	block.SetHash()
@@ -30,7 +28,7 @@ func NewBlock(height int64, prevBlockHash []byte, data []byte) *Block {
 
 func (b *Block) SetHash() {
 	timeStampBytes := IntToHex(b.TimeStamp)
-	heigthBytes := IntToHex(b.Heigth)
+	heigthBytes := IntToHex(b.Height)
 	blockBytes := bytes.Join([][]byte{
 		heigthBytes,
 		timeStampBytes,
@@ -43,12 +41,7 @@ func (b *Block) SetHash() {
 
 }
 
-func IntToHex(data int64) []byte {
+func CreateGenesisBlock(data []byte) *Block {
+	return NewBlock(1, nil, data)
 
-	buffer := new(bytes.Buffer)
-	err := binary.Write(buffer, binary.BigEndian, data)
-	if nil != err {
-		log.Printf("int transact to []byte failed! %v\n", err)
-	}
-	return buffer.Bytes()
 }
